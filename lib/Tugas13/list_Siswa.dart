@@ -27,6 +27,9 @@ class _DataSiswaState extends State<DataSiswa> {
   Future<void> getAnggota() async {
     final dataAnggota = await DbHelper.getAllAnggota();
     setState(() {
+      namaController.clear();
+      kelasController.clear();
+      umurController.clear();
       anggota = dataAnggota;
     });
   }
