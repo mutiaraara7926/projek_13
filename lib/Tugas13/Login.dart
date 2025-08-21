@@ -1,0 +1,326 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:projek_mini/Tugas13/home_page.dart';
+import 'package:projek_mini/Tugas13/registrasi_siswa.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void showSuccessDialog(BuildContext context, {required String message}) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierColor: Colors.black54,
+    builder: (context) {
+      Future.delayed(Duration(seconds: 3), () {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      });
+
+      return Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.75,
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Lottie.asset(
+                  'assets/lottie/sus.json',
+                  width: 150,
+                  height: 150,
+                  repeat: false,
+                  animate: true,
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Success!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 12, 51, 141),
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+class Login extends StatefulWidget {
+  const Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool isVisibility = false;
+  final _formKey = GlobalKey<FormState>();
+  Future<void> _saveUserName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("userName", name);
+  }
+
+  //fungsi untuk cek data register
+  Future<void> _login() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? savedEmail = prefs.getString("email");
+    String? savedPassword = prefs.getString("password");
+    String? savedName = prefs.getString("name");
+
+    if (savedEmail == null || savedPassword == null) {
+      // belum pernah registrasi
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Login Gagal"),
+          content: Text("Belum ada akun terdaftar, silakan registrasi dulu."),
+        ),
+      );
+      return;
+    }
+
+    if (emailController.text == savedEmail &&
+        passwordController.text == savedPassword) {
+      //buat manggil nama saat di home page
+      if (savedName != null) {
+        await _saveUserName(savedName);
+      }
+
+      showSuccessDialog(context, message: 'Succesful login');
+      Future.delayed(Duration(seconds: 3), () {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Homepage()),
+        );
+      });
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Login Gagal"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Belum ada akun terdaftar, silakan registrasi dulu."),
+                SizedBox(height: 20),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(245, 41, 89, 121),
+      ),
+      body: Container(
+        color: const Color.fromARGB(245, 41, 89, 121),
+        child: Padding(
+          padding: EdgeInsetsGeometry.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Hello",
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              SizedBox(height: 35),
+              Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    spacing: 12,
+                    children: [
+                      TextFormField(
+                        controller: emailController,
+                        style: TextStyle(color: Color(0xFFFFFFFF)),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hint: Text(
+                            "Email",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          hintStyle: TextStyle(color: Color(0xFFFFFFFF)),
+                          prefixIcon: Icon(
+                            Icons.email,
+                            color: Color(0xFFFFFFFF),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Email Tidak boleh kosong";
+                          }
+                          if (!value.contains("@")) {
+                            return "Email tidak valid";
+                          }
+                          if (!(value.endsWith("@gmail.com") ||
+                              value.endsWith("@yahoo.com"))) {
+                            return "Email tidak terdaftar";
+                          }
+                          if (RegExp('[A-Z]').hasMatch(value)) {
+                            return "Email harus huruf kecil";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 35),
+                      TextFormField(
+                        controller: passwordController,
+                        obscureText: !isVisibility,
+                        style: TextStyle(color: Color(0xFFFFFFFF)),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hint: Text(
+                            "Password",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Color(0xFFFFFFFF),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isVisibility
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.amberAccent,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isVisibility = !isVisibility;
+                              });
+                            },
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Password salah";
+                          }
+                          return null;
+                        },
+                      ),
+
+                      SizedBox(height: 75),
+                      SizedBox(
+                        width: 327,
+                        height: 60,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amberAccent,
+                            // foregroundColor: Colors.amber,
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _login();
+                              // pakai fungsi login baru
+                            }
+                          },
+
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: const Color.fromARGB(245, 41, 89, 121),
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(child: Divider()),
+                          Padding(
+                            padding: EdgeInsetsGeometry.all(10),
+                            child: Text(
+                              "or",
+                              style: TextStyle(
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                              ),
+                            ),
+                          ),
+                          Expanded(child: Divider()),
+                        ],
+                      ),
+
+                      SizedBox(height: 50),
+                      Text.rich(
+                        TextSpan(
+                          text: "Don't have account?",
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                          ),
+                          children: [
+                            TextSpan(
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RegistrasiSiswa(),
+                                    ),
+                                  );
+                                },
+                              text: "Sign Up",
+                              style: TextStyle(
+                                color: Colors.amberAccent,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
