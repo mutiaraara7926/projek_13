@@ -172,10 +172,37 @@ class _DataSiswaState extends State<DataSiswa> {
                           ),
                           IconButton(
                             onPressed: () {
-                              DbHelper.deleteUser(dataUserLogin.id!);
-                              getAnggota();
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text("Hapus Data"),
+                                    content: const Text(
+                                      "Apakah yakin ingin menghapus data ini?",
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("Batal"),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            DbHelper.deleteUser(
+                                              dataUserLogin.id!,
+                                            );
+                                            getAnggota();
+                                          });
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Hapus"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             },
-                            icon: Icon(Icons.delete),
+                            icon: const Icon(Icons.delete),
                           ),
                         ],
                       ),

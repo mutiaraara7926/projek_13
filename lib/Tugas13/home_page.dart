@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:projek_mini/Tugas13/jadwal_page.dart';
 import 'package:projek_mini/Tugas13/list_Siswa.dart';
+import 'package:projek_mini/Tugas13/log_out.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
-
+  static const id = "/home";
   @override
   State<Homepage> createState() => _HomepageState();
 }
@@ -21,8 +22,8 @@ class _HomepageState extends State<Homepage> {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromARGB(245, 41, 89, 121),
         currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromARGB(255, 24, 16, 32),
-        unselectedItemColor: Colors.amberAccent,
+        selectedItemColor: Colors.amberAccent,
+        unselectedItemColor: Color.fromARGB(255, 24, 16, 32),
         onTap: (int index) {
           setState(() {
             _selectedIndex = index;
@@ -214,6 +215,29 @@ class _tentangState extends State<tentang> {
                           ),
                         ),
                       ),
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 4,
+                        child: InkWell(
+                          onTap: () {},
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.group,
+                                  size: 50,
+                                  color: Colors.amber,
+                                ),
+                                SizedBox(height: 10),
+                                Text("ALUMNI", style: TextStyle(fontSize: 16)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -236,7 +260,10 @@ class AboutPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Tentang',
-          style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Color.fromARGB(255, 233, 214, 175),
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(245, 41, 89, 121),
@@ -279,6 +306,9 @@ class AboutPage extends StatelessWidget {
                 ),
               ],
             ),
+            SizedBox(height: 100),
+
+            Center(child: LogOutButton()),
           ],
         ),
       ),

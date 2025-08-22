@@ -6,7 +6,7 @@ import 'package:projek_mini/Tugas13/Login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
-
+  static const id = "/splash";
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }

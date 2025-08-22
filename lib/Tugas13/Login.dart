@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:projek_mini/Tugas13/home_page.dart';
 import 'package:projek_mini/Tugas13/registrasi_siswa.dart';
+import 'package:projek_mini/Tugas13/shared_Preference.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void showSuccessDialog(BuildContext context, {required String message}) {
@@ -70,7 +71,7 @@ void showSuccessDialog(BuildContext context, {required String message}) {
 
 class Login extends StatefulWidget {
   const Login({super.key});
-
+  static const id = "/login";
   @override
   State<Login> createState() => _LoginState();
 }
@@ -110,7 +111,7 @@ class _LoginState extends State<Login> {
       if (savedName != null) {
         await _saveUserName(savedName);
       }
-
+      PreferenceHandler.saveLogin();
       showSuccessDialog(context, message: 'Succesful login');
       Future.delayed(Duration(seconds: 3), () {
         if (Navigator.canPop(context)) {
